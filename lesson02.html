@@ -31,6 +31,8 @@
         var drawBall=function(){
           ctx.beginPath();
           ctx.arc(x,y,10,0,Math.PI*2,false);
+          ctx.arc(x+20,y+20,10,0,Math.PI*2,false);
+          ctx.arc(x-20,y-20,10,0,Math.PI*2,false);
           ctx.fillStyle='green';
           ctx.fill();
           ctx.closePath();
