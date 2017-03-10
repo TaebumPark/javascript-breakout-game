@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+    <style>
+      *{padding:0;margin:0;}
+      canvas{background:#eee;display:block;margin:0 auto;}
+    </style>
+  </head>
+
+  <body>
+    <canvas id="myCanvas" width="480" height="320">
+      이브라우저는 지원하지않는 브라우저입니다.
+    </canvas>
+    <script src="https://code.jquery.com/jquery-1.12.4.js" integrity="sha256-Qw82+bXyGq6MydymqBxNPYTaUXXq7c8v3CwiYwLLNXU=" crossorigin="anonymous"></script>
+    <script>
+
+      $(document).ready(function(){
+        //var canvas=document.getElementById('myCanvas');
+        //var ctx=canvas.getContext('2d');// 캔버스에 그리기 위해 실질적으로 사용되는 도구인 2D rendering context
+        var canvas=$('#myCanvas').get(0);
+        var ctx=canvas.getContext('2d');
+
+        //볼의 속성
+        var ballRadius=10;        // 볼 반지름
+        var ballColor='green';    // 볼 색상
+
+        var x=canvas.width/2;     //볼의 x축 좌표
+        var y=canvas.height-30;   //볼의 y축 좌표
+
+        var dx=2;                //볼의 x축 속도
+        var dy=-2;               //볼의 y축 속도
+
+        //패들객체
+        var paddle={
+          width:90,
+          height:10,
+          x:canvas.width/2-90/2,  //90=width;
+          y:canvas.height-10,
+          dx:10,
+          dy:0,
+          color:'green'
+        };
+
+        //벽돌객체
+        var brick = {
+          topOffset:5,
+          leftOffset:5,
+          width:86,
+          height:10,
+          rowCount:3,
+          colCount:5,
+          padding:10
+        };
+
+        $('body').keydown(function(event) {
+          console.log(event.which + 'key down');
+
+          //왼쪽화살표 눌렀을때
+          if(event.which==37){
+            if(paddle.x<=0){
+              paddle.x=0;
+            } else {
+              paddle.x-=paddle.dx;
+            }
+          }
+
+          //오른쪽화살표 눌렀을때
+          if(event.which==39){
+            if(paddle.x+paddle.width>=canvas.width){
+              paddle.x=canvas.width-paddle.width;
+            }else{
+              paddle.x+=paddle.dx;
+            }
+          }
+        });//keydown  end
+
+
+        var drawBall=function(){
+          ctx.beginPath();
+          ctx.arc(x,y,ballRadius,0,Math.PI*2,false);
+          ctx.fillStyle=ballColor;
+          ctx.fill();
+          ctx.closePath();
+        };
+
+        var drawPaddle=function(){
+          ctx.beginPath();
+          ctx.rect(paddle.x,paddle.y,paddle.width,paddle.height);
+          ctx.fillStyle=paddle.color;
+          ctx.fill();
+          ctx.closePath();
+        };
+
+        var drawBrick=function(){
+          for(var i=0;i< brick.rowCount;i++){
+            for(var j=0; j <brick.colCount; j++){
+              var brickX=brick.leftOffset+(brick.width+brick.padding)*j;
+              var brickY=brick.topOffset+(brick.height+brick.padding)*i;
+              ctx.beginPath();
+              ctx.rect(brickX,brickY,brick.width,brick.height);
+              ctx.fillStyle='red';
+              ctx.fill();
+              ctx.closePath();
+            }
+          }
+        };
+
+        function draw(){
+          //ball
+          ctx.clearRect(0,0,canvas.width,canvas.height);
+          drawBrick();
+          drawBall();
+          drawPaddle();
+
+          if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
+               dx = -dx;
+          }
+          if(y + dy >= canvas.height-ballRadius){
+            if((x+dx<paddle.x) || (x+dx>paddle.x+paddle.width)){
+              alert('game over');         //paddle을 벗어나서 ball이 바닥에 닿았을때 game over  alert창 띄운다.
+            }
+          }
+          if(y + dy < ballRadius || y + dy > canvas.height-ballRadius) {
+               dy = -dy;
+          }
+
+
+          x+=dx;
+          y+=dy;
+          console.log(draw);
+
+        }
+        setInterval(draw,10);
+
+      });//document
+
+
+    </script>
+  </body>
+</html>
